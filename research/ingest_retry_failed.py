@@ -5,6 +5,8 @@ Uses longer delays, browser-like headers, and exponential backoff.
 Usage:
     uv run python research/ingest_retry_failed.py
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import csv
 import logging

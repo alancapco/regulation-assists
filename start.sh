@@ -17,9 +17,21 @@ port_in_use() { lsof -ti tcp:"$1" >/dev/null 2>&1; }
 
 echo "==> Starting AI Regulation Corpus stack..."
 
+# Single env file at repo root
+if [ ! -f .env ] && [ -f .env.example ]; then
+  cp .env.example .env
+  echo "    created .env from .env.example — set OPENAI_API_KEY if you need embeddings/chat."
+fi
+if [ -f .env ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env
+  set +a
+fi
+
 # 1) App Neo4j + Postgres (idempotent). Never touches shared capco-graph-neo4j.
 if command -v docker >/dev/null 2>&1; then
-  docker compose -f docker-compose.app.yml up -d 2>&1 | tail -5
+  docker compose -f docker-compose.app.yml --env-file .env up -d 2>&1 | tail -5
   echo "    waiting for Neo4j + Postgres to become healthy..."
   for _ in $(seq 1 45); do
     neo="$(docker inspect -f '{{.State.Health.Status}}' capco-app-neo4j 2>/dev/null || echo unknown)"
@@ -41,10 +53,6 @@ if port_in_use 8000; then
   echo "    backend already running on :8000, skipping."
 else
   echo "    starting backend on http://localhost:8000 ..."
-  if [ ! -f backend/.env ] && [ -f backend/.env.example ]; then
-    cp backend/.env.example backend/.env
-    echo "    created backend/.env from example — set OPENAI_API_KEY if you need embeddings/chat."
-  fi
   uv sync >/dev/null 2>&1
   nohup uv run uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 > .run/backend.log 2>&1 &
   echo "    backend pid=$!"

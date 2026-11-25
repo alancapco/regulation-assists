@@ -13,6 +13,8 @@ Env vars:
     POSTGRES_PASSWORD — default capco-regulation-change-me
     POSTGRES_DB      — default regulation_assistant
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import logging
 import os

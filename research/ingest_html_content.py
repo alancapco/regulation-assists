@@ -7,6 +7,8 @@ This supplements the existing article.md ingestion with rich analytical content.
 Usage:
     uv run python research/ingest_html_content.py
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import logging
 import os

@@ -12,26 +12,17 @@ Env vars:
     POSTGRES_PASSWORD — default capco-regulation-change-me
     POSTGRES_DB      — default regulation_assistant
 """
+import research._env  # noqa: F401  # load repo-root .env
+
 import asyncio
 import logging
 import os
 import sys
-from pathlib import Path
 
 import asyncpg
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
-
-# Load .env from backend directory
-try:
-    from dotenv import load_dotenv
-    backend_env = Path(__file__).parent.parent / "backend" / ".env"
-    if backend_env.exists():
-        load_dotenv(backend_env)
-        logger.info(f"Loaded environment from {backend_env}")
-except ImportError:
-    logger.warning("python-dotenv not installed, relying on system environment")
 
 
 async def generate_embeddings(conn: asyncpg.Connection) -> int:

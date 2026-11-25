@@ -7,6 +7,8 @@ the topics array in the Postgres database.
 Usage:
     uv run python research/update_topics.py
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import json
 import logging

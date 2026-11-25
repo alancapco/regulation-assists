@@ -52,7 +52,7 @@ Canonical local databases are started with **`docker-compose.app.yml`** (not the
 | Module | Role |
 |--------|------|
 | `main.py` | FastAPI app, CORS, lifespan (Neo4j driver + Postgres pool) |
-| `config.py` | Settings from `backend/.env` |
+| `config.py` | Settings from repo-root `.env` |
 | `db_postgres.py` | asyncpg pool |
 | `cypher.py` | Parameterized Neo4j queries (`Q_PING`, `Q_GRAPH`, `Q_REGULATIONS`) |
 | `mapping.py` / `schemas.py` | API contract mapping |
@@ -85,8 +85,8 @@ Product and architecture specs (requirements, GraphRAG replan, phase plans).
 git clone https://github.com/alancapco/regulation-assists.git
 cd regulation-assists
 
-cp backend/.env.example backend/.env
-# Edit backend/.env — set OPENAI_API_KEY if you need embeddings or server-side chat
+cp .env.example .env
+# Edit .env — set OPENAI_API_KEY if you need embeddings or server-side chat
 ```
 
 ### 2. One-command local stack
@@ -123,7 +123,20 @@ uv run uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 cd frontend && npm install && npm run dev
 ```
 
-### 4. Tests
+### 4. Load shared database dumps (optional)
+
+To replicate the corpus on a new machine after the containers are up:
+
+```bash
+# See data/dumps/README.md for full restore steps
+docker exec -i capco-app-postgres \
+  pg_restore -U capco -d regulation_assistant --clean --if-exists --no-owner --no-acl \
+  < data/dumps/postgres_regulation_assistant.dump
+```
+
+Neo4j restore requires a brief stop/load/start cycle — documented in [`data/dumps/README.md`](data/dumps/README.md).
+
+### 5. Tests
 
 ```bash
 uv run pytest
@@ -133,7 +146,7 @@ uv run pytest
 
 ## Environment
 
-App settings are loaded from **`backend/.env`** (see `backend/.env.example`).
+All settings and keys live in the **repo-root `.env`** (see `.env.example`). The API, `./start.sh`, Docker Compose, and research scripts all read from that one file.
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
@@ -144,7 +157,9 @@ App settings are loaded from **`backend/.env`** (see `backend/.env.example`).
 | `CORS_ORIGINS` | `http://localhost:5173,...` | Browser origins |
 | `GRAPH_MAX_NODES` / `GRAPH_REG_LIMIT` | `500` / `200` | Graph API caps |
 
-Compose passwords can be overridden with the same env vars when running `docker compose -f docker-compose.app.yml up -d`.
+```bash
+docker compose -f docker-compose.app.yml --env-file .env up -d
+```
 
 ---
 
@@ -192,7 +207,7 @@ regulation-assists/
 
 ## Security notes
 
-- Never commit `backend/.env` or root `.env` (gitignored).
+- Never commit `.env` (gitignored). Use `.env.example` as the template.
 - Rotate any keys that were previously committed to history.
 - Default Neo4j/Postgres passwords are for local development only.
 

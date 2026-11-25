@@ -48,7 +48,7 @@ fi
 if command -v docker >/dev/null 2>&1; then
   if docker ps -a --format '{{.Names}}' | grep -qx capco-app-neo4j; then
     echo "    stopping isolated Neo4j (capco-app-neo4j)..."
-    docker compose -f docker-compose.app.yml down 2>&1 | tail -3
+    docker compose -f docker-compose.app.yml --env-file .env down 2>&1 | tail -3
     echo "    isolated Neo4j stopped (data preserved in ./neo4j-app)."
   else
     echo "    isolated Neo4j container not present, skipping."

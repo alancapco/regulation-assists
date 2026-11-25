@@ -7,6 +7,8 @@ Uses the same approach as the original ingestion but for the full dataset.
 Usage:
     uv run python research/ingest_all_regulations.py
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import csv
 import logging

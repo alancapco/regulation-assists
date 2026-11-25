@@ -1,9 +1,11 @@
 # Application stack: isolated Neo4j + Postgres (pgvector).
-# Start:   docker compose -f docker-compose.app.yml up -d
-# Stop:    docker compose -f docker-compose.app.yml down
-# Wipe:    docker compose -f docker-compose.app.yml down -v
+# Start:   docker compose -f docker-compose.app.yml --env-file .env up -d
+# Stop:    docker compose -f docker-compose.app.yml --env-file .env down
+# Wipe:    docker compose -f docker-compose.app.yml --env-file .env down -v
 #
-# Explicit project name avoids colliding with any shared Neo4j compose project.
+# Important: Neo4j maps every NEO4J_* container env var into neo4j.conf.
+# Never pass the app .env (NEO4J_URI, etc.) into this service — only set the
+# known Neo4j settings below. Compose still reads root .env for ${...} substitution.
 name: regulation-app
 
 services:
@@ -14,7 +16,6 @@ services:
       - "7475:7474"   # Browser UI (shared/legacy Neo4j often uses 7474)
       - "7688:7687"   # Bolt — backend default NEO4J_URI
     environment:
-      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-capco-graph-change-me}
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-capco-graph-change-me}
       NEO4J_PLUGINS: '["apoc"]'
       NEO4J_dbms_security_auth__minimum__password__length: "6"
@@ -26,7 +27,8 @@ services:
       - ./neo4j-app/logs:/logs
       - ./neo4j-app/import:/var/lib/neo4j/import
     healthcheck:
-      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$$NEO4J_PASSWORD\" 'RETURN 1' >/dev/null 2>&1 || exit 1"]
+      # Password is substituted by Compose from --env-file .env (not a container NEO4J_* var)
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p '${NEO4J_PASSWORD:-capco-graph-change-me}' 'RETURN 1' >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 30

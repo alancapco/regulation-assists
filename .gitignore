@@ -1,9 +1,7 @@
-# Secrets / local env
+# Secrets / local env (single source: repo-root .env)
 .env
 .env.*
 !.env.example
-backend/.env
-!**/.env.example
 
 # Python
 .venv/

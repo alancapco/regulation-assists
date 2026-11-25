@@ -12,6 +12,8 @@ Output:
     - Creates article_full.json with structured data
     - Updates Postgres with all extracted sections
 """
+
+import research._env  # noqa: F401  # load repo-root .env
 import asyncio
 import json
 import logging

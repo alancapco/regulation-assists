@@ -1,0 +1,53 @@
+# Application stack: isolated Neo4j + Postgres (pgvector).
+# Start:   docker compose -f docker-compose.app.yml up -d
+# Stop:    docker compose -f docker-compose.app.yml down
+# Wipe:    docker compose -f docker-compose.app.yml down -v
+#
+# Explicit project name avoids colliding with any shared Neo4j compose project.
+name: regulation-app
+
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: capco-app-neo4j
+    ports:
+      - "7475:7474"   # Browser UI (shared/legacy Neo4j often uses 7474)
+      - "7688:7687"   # Bolt — backend default NEO4J_URI
+    environment:
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-capco-graph-change-me}
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-capco-graph-change-me}
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_auth__minimum__password__length: "6"
+      NEO4J_dbms_memory_heap_initial__size: "512m"
+      NEO4J_dbms_memory_heap_max__size: "1G"
+      NEO4J_dbms_memory_pagecache_size: "512m"
+    volumes:
+      - ./neo4j-app/data:/data
+      - ./neo4j-app/logs:/logs
+      - ./neo4j-app/import:/var/lib/neo4j/import
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p \"$$NEO4J_PASSWORD\" 'RETURN 1' >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: capco-app-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-capco}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-capco-regulation-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-regulation_assistant}
+    volumes:
+      - ./neo4j-app/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 20s
+    restart: unless-stopped

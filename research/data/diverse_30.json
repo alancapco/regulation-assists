@@ -1,0 +1,40 @@
+[
+  {"id": "RAI-EU-NA-E2AIXXX-2024", "jurisdiction": "European Union"},
+  {"id": "RAI-EU-NA-COM2025-2025", "jurisdiction": "European Union"},
+  {"id": "RAI-EU-NA-ENFORCE-2026", "jurisdiction": "European Union"},
+  {"id": "RAI-EU-NA-CLASSIF-2026", "jurisdiction": "European Union"},
+  {"id": "RAI-EU-NA-TRANSPA-2025", "jurisdiction": "European Union"},
+
+  {"id": "RAI-US-NA-AMERICA-2025", "jurisdiction": "United States"},
+  {"id": "RAI-US-CO-SB26189-2026", "jurisdiction": "United States"},
+  {"id": "RAI-US-NA-HR16940-2025", "jurisdiction": "United States"},
+  {"id": "RAI-US-NA-HR21520-2025", "jurisdiction": "United States"},
+  {"id": "RAI-US-NA-MANAGEM-2023", "jurisdiction": "United States"},
+
+  {"id": "RAI-CN-NA-MIASCXX-2025", "jurisdiction": "China"},
+  {"id": "RAI-CN-NA-NSCIDXX-2017", "jurisdiction": "China"},
+  {"id": "RAI-CN-NA-PAARIXX-2021", "jurisdiction": "China"},
+  {"id": "RAI-CN-NA-ANTHROP-2025", "jurisdiction": "China"},
+
+  {"id": "RAI-GB-NA-PRACTIC-2024", "jurisdiction": "United Kingdom"},
+  {"id": "RAI-GB-NA-CONSENT-2026", "jurisdiction": "United Kingdom"},
+  {"id": "RAI-GB-NA-SI20264-2026", "jurisdiction": "United Kingdom"},
+
+  {"id": "RAI-HK-NA-HKGAIXX-2025", "jurisdiction": "Hong Kong"},
+  {"id": "RAI-HK-NA-RESPONS-2026", "jurisdiction": "Hong Kong"},
+
+  {"id": "RAI-CA-NA-WWF21XX-2024", "jurisdiction": "Canada"},
+  {"id": "RAI-CA-NA-AIAATXX-2019", "jurisdiction": "Canada"},
+
+  {"id": "RAI-BR-NA-RCN2RXX-2025", "jurisdiction": "Brazil"},
+  {"id": "RAI-BR-NA-DN1DIXX-2024", "jurisdiction": "Brazil"},
+
+  {"id": "RAI-SG-NA-AVAGTXX-2022", "jurisdiction": "Singapore"},
+  {"id": "RAI-SG-NA-AIMRMXX-2024", "jurisdiction": "Singapore"},
+
+  {"id": "RAI-AU-NA-NAAIGXX-2024", "jurisdiction": "Australia"},
+  {"id": "RAI-JP-NA-PRDUAXX-2025", "jurisdiction": "Japan"},
+  {"id": "RAI-KR-NA-NPIIAXX-2025", "jurisdiction": "South Korea"},
+  {"id": "RAI-IN-NA-IAGGEXX-2025", "jurisdiction": "India"},
+  {"id": "RAI-XE-GO-CECAIXX-2024", "jurisdiction": "Council of Europe"}
+]

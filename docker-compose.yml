@@ -1,0 +1,36 @@
+# Optional shared Neo4j only (legacy / multi-project).
+# The Regulation Assistant app itself uses docker-compose.app.yml
+# (Neo4j on 7688 + Postgres on 5433). Prefer that for local development.
+#
+# Start:   docker compose up -d
+# Stop:    docker compose down
+# Wipe:    docker compose down -v
+#
+# Browser: http://localhost:7474
+# Bolt:    bolt://localhost:7687
+
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: capco-graph-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:-capco-graph-change-me}"
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_auth__minimum__password__length: "6"
+      NEO4J_dbms_memory_heap_initial__size: "512m"
+      NEO4J_dbms_memory_heap_max__size: "1G"
+      NEO4J_dbms_memory_pagecache_size: "512m"
+    volumes:
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+      - ./neo4j/import:/var/lib/neo4j/import
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p $${NEO4J_PASSWORD:-capco-graph-change-me} 'RETURN 1' >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
